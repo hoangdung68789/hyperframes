@@ -1,0 +1,737 @@
+<!doctype html>
+<html lang="vi" data-resolution="portrait">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <script src="assets/js/gsap.min.js"></script>
+    <style>
+      @font-face {
+        font-family: "Be Vietnam Pro";
+        src: url("assets/fonts/BeVietnamPro-ExtraBold.ttf") format("truetype");
+        font-weight: 800;
+      }
+      @font-face {
+        font-family: "Be Vietnam Pro";
+        src: url("assets/fonts/BeVietnamPro-SemiBold.ttf") format("truetype");
+        font-weight: 600;
+      }
+      :root {
+        --ground: #0d1826;
+        --ground-2: #13243a;
+        --ink: #ffffff;
+        --gold: #f2c14e;
+        --warm: #ffd98a;
+        --line: rgba(242, 193, 78, 0.95);
+        --grid: rgba(255, 255, 255, 0.045);
+        --muted: rgba(255, 255, 255, 0.74);
+        --rose: #e98aa8;
+        --rose-deep: #c2255c;
+        --paper: #f6efe2;
+        --font-display: "Be Vietnam Pro", sans-serif;
+        --shadow: 0 6px 24px rgba(0, 0, 0, 0.55);
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        width: 1080px;
+        height: 1920px;
+        overflow: hidden;
+        background: var(--ground);
+      }
+      #root {
+        position: relative;
+        width: 1080px;
+        height: 1920px;
+        overflow: hidden;
+        background: radial-gradient(120% 70% at 50% 38%, var(--ground-2) 0%, var(--ground) 70%);
+        font-family: var(--font-display);
+        color: var(--ink);
+      }
+      #grid {
+        position: absolute;
+        inset: 0;
+        background-image:
+          linear-gradient(var(--grid) 2px, transparent 2px),
+          linear-gradient(90deg, var(--grid) 2px, transparent 2px);
+        background-size: 90px 90px;
+        background-position: 0 30px;
+      }
+      .scene {
+        position: absolute;
+        inset: 0;
+      }
+      .txt {
+        position: absolute;
+        left: 0;
+        width: 1080px;
+        text-align: center;
+        text-shadow: var(--shadow);
+        white-space: nowrap;
+      }
+      .h1 {
+        font-weight: 800;
+        font-size: 96px;
+        line-height: 1.05;
+        letter-spacing: -0.01em;
+      }
+      .h2 {
+        font-weight: 600;
+        font-size: 50px;
+        line-height: 1.2;
+        color: var(--muted);
+      }
+      .gold {
+        color: var(--gold);
+      }
+      .word {
+        display: inline-block;
+      }
+      svg {
+        position: absolute;
+        overflow: visible;
+      }
+      .draw {
+        fill: none;
+        stroke: var(--line);
+        stroke-width: 5;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-dasharray: 1;
+        stroke-dashoffset: 1;
+      }
+      .thin {
+        stroke-width: 3;
+        stroke: rgba(255, 255, 255, 0.75);
+      }
+      .art {
+        fill: none;
+        stroke: var(--line);
+        stroke-width: 5;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+
+      /* S1 hook */
+      #s1-price {
+        top: 560px;
+        font-weight: 800;
+        font-size: 200px;
+        line-height: 1;
+        color: var(--gold);
+        font-variant-numeric: tabular-nums;
+      }
+      #s1-price .unit {
+        font-size: 116px;
+        margin-left: 18px;
+      }
+      #alley {
+        left: 0;
+        top: 960px;
+      }
+      .win-lit {
+        fill: var(--warm);
+        opacity: 0;
+      }
+
+      /* S2 facade */
+      #house {
+        left: 300px;
+        top: 330px;
+      }
+      .chip {
+        position: absolute;
+        font-weight: 800;
+        font-size: 64px;
+        white-space: nowrap;
+        text-shadow: var(--shadow);
+      }
+      .chip .dot {
+        display: inline-block;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: var(--gold);
+        margin-right: 20px;
+        vertical-align: middle;
+        transform: translateY(-6px);
+      }
+
+      /* S3 plan */
+      #plan {
+        left: 240px;
+        top: 360px;
+      }
+      .dim {
+        position: absolute;
+        font-weight: 800;
+        font-size: 64px;
+        text-shadow: var(--shadow);
+        white-space: nowrap;
+      }
+      #s3-area {
+        position: absolute;
+        left: 540px;
+        top: 770px;
+        font-weight: 800;
+        font-size: 130px;
+        color: var(--gold);
+        text-shadow: var(--shadow);
+        white-space: nowrap;
+        font-variant-numeric: tabular-nums;
+      }
+      #s3-area sup {
+        font-size: 64px;
+      }
+
+      /* S4 map */
+      #map {
+        left: 0;
+        top: 230px;
+      }
+      #trails {
+        left: 0;
+        top: 0;
+      }
+      .road {
+        fill: none;
+        stroke: rgba(255, 255, 255, 0.16);
+        stroke-width: 14;
+        stroke-linecap: round;
+      }
+      .road.main {
+        stroke: rgba(242, 193, 78, 0.55);
+        stroke-width: 26;
+        stroke-dasharray: 1;
+        stroke-dashoffset: 1;
+      }
+      .trail {
+        fill: none;
+        stroke: var(--warm);
+        stroke-width: 6;
+        stroke-linecap: round;
+        stroke-dasharray: 1;
+        stroke-dashoffset: 1;
+      }
+      .poi {
+        position: absolute;
+        width: 140px;
+        text-align: center;
+        opacity: 0;
+      }
+      .poi .ic {
+        width: 92px;
+        height: 92px;
+        margin: 0 auto 10px;
+        border-radius: 50%;
+        border: 5px solid var(--gold);
+        display: grid;
+        place-items: center;
+        background: var(--ground);
+      }
+      .poi .lb {
+        font-weight: 800;
+        font-size: 40px;
+        white-space: nowrap;
+        margin-left: -40px;
+        width: 220px;
+        text-shadow: var(--shadow);
+      }
+      #pin {
+        position: absolute;
+        left: 490px;
+        top: 700px;
+        width: 100px;
+        height: 130px;
+      }
+      #runner {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 40px;
+        height: 40px;
+        margin: -20px 0 0 -20px;
+        border-radius: 50%;
+        background: var(--ink);
+        border: 9px solid var(--gold);
+        box-shadow: 0 0 24px rgba(255, 217, 138, 0.9);
+        opacity: 0;
+      }
+
+      /* S5 legal booklet */
+      #book {
+        position: absolute;
+        left: 370px;
+        top: 470px;
+        width: 340px;
+        height: 460px;
+      }
+      #page-r,
+      #cover,
+      #page-l {
+        position: absolute;
+        top: 0;
+        width: 340px;
+        height: 460px;
+        border-radius: 10px 18px 18px 10px;
+      }
+      #page-r {
+        left: 0;
+        background: var(--paper);
+        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.45);
+      }
+      #page-l {
+        left: -340px;
+        border-radius: 18px 10px 10px 18px;
+        background: #f3dde4;
+        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.45);
+        transform-origin: 100% 50%;
+      }
+      #cover {
+        left: 0;
+        background: linear-gradient(160deg, #f2a3bd 0%, var(--rose) 60%, #d9708f 100%);
+        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+        transform-origin: 0% 50%;
+      }
+      #cover::after {
+        content: "";
+        position: absolute;
+        inset: 18px;
+        border: 4px solid rgba(255, 255, 255, 0.7);
+        border-radius: 10px;
+      }
+      #stamp {
+        position: absolute;
+        left: 28px;
+        top: 250px;
+        width: 284px;
+        height: 150px;
+        border: 8px solid var(--rose-deep);
+        border-radius: 22px;
+        display: grid;
+        place-items: center;
+        color: var(--rose-deep);
+        font-weight: 800;
+        font-size: 50px;
+        line-height: 1.02;
+        text-align: center;
+        opacity: 0;
+      }
+
+      /* S6 CTA */
+      #keys {
+        left: 390px;
+        top: 300px;
+      }
+      .ring {
+        position: absolute;
+        left: 460px;
+        top: 1190px;
+        width: 160px;
+        height: 160px;
+        border-radius: 50%;
+        border: 6px solid var(--gold);
+        opacity: 0;
+      }
+      #cta-icon {
+        position: absolute;
+        left: 480px;
+        top: 1210px;
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        background: var(--gold);
+        display: grid;
+        place-items: center;
+      }
+
+      #flash {
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(60% 45% at 50% 45%, #fff6dc 0%, rgba(242, 193, 78, 0.7) 45%, rgba(242, 193, 78, 0) 100%);
+        opacity: 0;
+        pointer-events: none;
+      }
+      #wipe {
+        position: absolute;
+        inset: 0;
+        background: var(--gold);
+        clip-path: inset(0 100% 0 0);
+        pointer-events: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-duration="30"
+      data-width="1080"
+      data-height="1920"
+    >
+      <div id="grid"></div>
+
+      <!-- S1 · 0–5s · Hook: xe hơi chạy vào hẻm + giá -->
+      <div id="s1" class="scene clip" data-start="0" data-duration="5" data-track-index="1">
+        <div id="s1-l1" class="txt h1" style="top: 300px">
+          <span class="word">NHÀ</span> <span class="word">PHỐ</span><br />
+          <span class="word gold">HẺM</span> <span class="word gold">XE</span> <span class="word gold">HƠI</span>
+        </div>
+        <div id="s1-price" class="txt"><span id="s1-num">0,0</span><span class="unit">TỶ</span></div>
+        <div id="s1-area" class="txt h2" style="top: 790px">Khu vực Quận 10</div>
+        <svg id="alley" width="1080" height="460" viewBox="0 0 1080 460">
+          <!-- house at the end of the alley -->
+          <path class="art" d="M600 130 L760 50 L920 130" />
+          <path class="art" d="M620 130 V400 H900 V130" />
+          <rect class="win-lit" id="aw1" x="650" y="160" width="100" height="80" rx="4" />
+          <rect class="win-lit" id="aw2" x="770" y="160" width="100" height="80" rx="4" />
+          <rect class="win-lit" id="aw3" x="710" y="280" width="140" height="120" rx="4" />
+          <path class="art" style="stroke-width: 3; stroke: rgba(255, 255, 255, 0.75)" d="M650 160 h100 v80 h-100 Z M770 160 h100 v80 h-100 Z M710 280 h140 v120 M710 280 v120" />
+          <!-- ground + lane marks -->
+          <path d="M40 402 H1040" stroke="rgba(255,255,255,0.35)" stroke-width="4" />
+          <path d="M60 440 H160 M240 440 H340 M420 440 H520" stroke="rgba(255,255,255,0.18)" stroke-width="6" stroke-linecap="round" />
+          <!-- speed lines -->
+          <g id="speed" stroke="var(--warm)" stroke-width="5" stroke-linecap="round" opacity="0">
+            <path d="M0 300 H140 M30 340 H190 M10 380 H120" />
+          </g>
+          <!-- car (side view) -->
+          <g id="car" transform="translate(-420 0)">
+            <g id="car-body">
+              <path d="M200 390 H530 Q560 390 560 360 V330 Q560 312 540 308 L470 300 L420 252 Q408 240 390 240 H290 Q270 240 258 252 L215 300 Q200 304 200 320 Z" fill="var(--ground)" stroke="var(--gold)" stroke-width="6" stroke-linejoin="round" />
+              <path d="M275 300 L300 262 H360 V300 Z M380 300 V262 H400 L432 300 Z" fill="rgba(255,217,138,0.25)" stroke="rgba(255,255,255,0.8)" stroke-width="3" />
+              <rect x="536" y="320" width="22" height="14" rx="4" fill="var(--warm)" />
+            </g>
+            <path id="beam" d="M558 326 L700 300 L700 356 Z" fill="rgba(255,217,138,0.28)" opacity="0" />
+            <g id="wheel1">
+              <circle cx="280" cy="390" r="32" fill="var(--ground)" stroke="var(--ink)" stroke-width="6" />
+              <path d="M280 364 V416 M254 390 H306" stroke="var(--gold)" stroke-width="5" />
+            </g>
+            <g id="wheel2">
+              <circle cx="480" cy="390" r="32" fill="var(--ground)" stroke="var(--ink)" stroke-width="6" />
+              <path d="M480 364 V416 M454 390 H506" stroke="var(--gold)" stroke-width="5" />
+            </g>
+          </g>
+        </svg>
+      </div>
+
+      <!-- S2 · 5–10s · Mặt tiền vẽ nét, đèn bật, cửa cuốn kéo lên -->
+      <div id="s2" class="scene clip" data-start="5" data-duration="5" data-track-index="2">
+        <svg id="house" width="480" height="760" viewBox="0 0 480 760">
+          <rect class="win-lit" id="hw1" x="80" y="480" width="320" height="90" rx="3" />
+          <rect class="win-lit" id="hw2" x="80" y="330" width="320" height="90" rx="3" />
+          <rect class="win-lit" id="hw3" x="80" y="180" width="320" height="90" rx="3" />
+          <rect id="interior" x="90" y="640" width="300" height="110" fill="var(--warm)" opacity="0.9" />
+          <g id="roller">
+            <rect x="90" y="640" width="300" height="110" fill="#1d3150" />
+            <path d="M90 656 H390 M90 672 H390 M90 688 H390 M90 704 H390 M90 720 H390 M90 736 H390" stroke="rgba(255,255,255,0.25)" stroke-width="3" />
+          </g>
+          <path class="draw" pathLength="1" d="M10 150 L240 40 L470 150" />
+          <path class="draw" pathLength="1" d="M30 150 L30 750 L450 750 L450 150 Z" />
+          <path class="draw" pathLength="1" d="M30 300 L450 300 M30 450 L450 450 M30 600 L450 600" />
+          <path class="draw thin" pathLength="1" d="M80 180 h320 v90 h-320 Z" />
+          <path class="draw thin" pathLength="1" d="M80 330 h320 v90 h-320 Z" />
+          <path class="draw thin" pathLength="1" d="M80 480 h320 v90 h-320 Z" />
+          <path class="draw thin" pathLength="1" d="M60 300 v-28 M110 300 v-28 M160 300 v-28 M210 300 v-28 M260 300 v-28 M310 300 v-28 M360 300 v-28 M410 300 v-28 M60 272 H420" />
+          <path class="draw thin" pathLength="1" d="M60 450 v-28 M110 450 v-28 M160 450 v-28 M210 450 v-28 M260 450 v-28 M310 450 v-28 M360 450 v-28 M410 450 v-28 M60 422 H420" />
+          <path class="draw thin" pathLength="1" d="M90 750 V640 H390 V750" />
+        </svg>
+        <div id="s2-c1" class="chip" style="left: 290px; top: 1150px"><span class="dot"></span>1 trệt · 3 lầu</div>
+        <div id="s2-c2" class="chip" style="left: 290px; top: 1260px"><span class="dot"></span>4 PN · 5 WC</div>
+      </div>
+
+      <!-- S3 · 10–15s · Mặt bằng, thước đo, nội thất rơi vào phòng -->
+      <div id="s3" class="scene clip" data-start="10" data-duration="5" data-track-index="3">
+        <svg id="plan" width="260" height="960" viewBox="0 0 260 960">
+          <path class="draw" pathLength="1" d="M20 30 H240 M20 14 V46 M240 14 V46" />
+          <path class="draw" pathLength="1" d="M20 80 H240 V940 H20 Z" />
+          <path class="draw thin" pathLength="1" d="M20 300 H240 M20 560 H160 M160 560 V720 M20 720 H240" />
+          <path class="draw" pathLength="1" d="M-40 80 V940 M-56 80 H-24 M-56 940 H-24" />
+          <!-- furniture -->
+          <g class="furn" id="f-bed">
+            <rect x="60" y="120" width="140" height="150" rx="10" fill="none" stroke="var(--warm)" stroke-width="4" />
+            <rect x="74" y="132" width="50" height="34" rx="8" fill="var(--warm)" />
+            <rect x="136" y="132" width="50" height="34" rx="8" fill="var(--warm)" />
+          </g>
+          <g class="furn" id="f-sofa">
+            <path d="M50 380 H210 V470 H50 Z M50 380 V500 M210 380 V500 M70 470 V440 H190 V470" fill="none" stroke="var(--warm)" stroke-width="4" stroke-linejoin="round" />
+          </g>
+          <g class="furn" id="f-stairs">
+            <path d="M40 700 H70 V670 H100 V640 H130 V610 H150" fill="none" stroke="var(--warm)" stroke-width="4" />
+          </g>
+          <g class="furn" id="f-car">
+            <rect x="80" y="760" width="100" height="160" rx="26" fill="none" stroke="var(--warm)" stroke-width="4" />
+            <path d="M92 800 H168 M92 880 H168" stroke="var(--warm)" stroke-width="4" />
+          </g>
+        </svg>
+        <div id="s3-w" class="dim" style="left: 320px; top: 280px">4 m</div>
+        <div id="s3-h" class="dim" style="left: 30px; top: 800px">16 m</div>
+        <div id="s3-area"><span id="s3-num">0</span> m<sup>2</sup></div>
+        <div id="s3-lbl" class="h2" style="position: absolute; left: 548px; top: 935px">diện tích đất</div>
+      </div>
+
+      <!-- S4 · 15–20.5s · Bản đồ: ghim, bán kính, xe chạy tới tiện ích -->
+      <div id="s4" class="scene clip" data-start="15" data-duration="5.5" data-track-index="4">
+        <svg id="map" width="1080" height="1220" viewBox="0 0 1080 1220">
+          <path d="M-40 980 C 220 900 380 1060 640 980 S 980 860 1120 920" fill="none" stroke="rgba(110,170,230,0.35)" stroke-width="60" stroke-linecap="round" />
+          <ellipse cx="830" cy="300" rx="120" ry="80" fill="rgba(120,190,130,0.22)" />
+          <path class="road" d="M-20 380 H1100" />
+          <path class="road" d="M180 -20 V1240" />
+          <path class="road" d="M760 -20 V1240" />
+          <path class="road" d="M-20 760 H1100" />
+          <path class="road main" pathLength="1" d="M-20 560 C 300 540 700 620 1100 520" />
+          <path class="road main" pathLength="1" d="M520 -20 C 500 300 560 700 500 1240" />
+          <circle id="radius" cx="540" cy="600" r="380" fill="rgba(242,193,78,0.06)" stroke="var(--gold)" stroke-width="4" stroke-dasharray="14 14" />
+        </svg>
+        <svg id="trails" width="1080" height="1920" viewBox="0 0 1080 1920">
+          <path class="trail" id="tr1" pathLength="1" d="M540 790 L540 520 L240 520" />
+          <path class="trail" id="tr2" pathLength="1" d="M240 520 L540 520 L540 690 L770 690" />
+          <path class="trail" id="tr3" pathLength="1" d="M770 690 L540 690 L540 905 L320 905" />
+        </svg>
+        <svg id="pin" viewBox="0 0 100 130">
+          <path d="M50 126 C 50 126 8 74 8 46 A 42 42 0 1 1 92 46 C 92 74 50 126 50 126 Z" fill="var(--gold)" />
+          <circle cx="50" cy="46" r="16" fill="var(--ground)" />
+        </svg>
+        <div id="runner"></div>
+        <div id="s4-r" class="h2" style="position: absolute; left: 560px; top: 1180px; color: var(--gold)">bán kính 2 km</div>
+        <div class="poi" data-layout-allow-overflow id="poi1" style="left: 160px; top: 474px">
+          <div class="ic">
+            <svg width="44" height="44" viewBox="0 0 44 44" style="position: static"><path d="M16 4h12v12h12v12H28v12H16V28H4V16h12z" fill="var(--gold)" /></svg>
+          </div>
+          <div class="lb">Bệnh viện</div>
+        </div>
+        <div class="poi" data-layout-allow-overflow id="poi2" style="left: 700px; top: 644px">
+          <div class="ic">
+            <svg width="48" height="44" viewBox="0 0 48 44" style="position: static"><path d="M2 6h8l6 24h24l5-16H14" fill="none" stroke="var(--gold)" stroke-width="5" stroke-linejoin="round" /><circle cx="19" cy="38" r="4" fill="var(--gold)" /><circle cx="37" cy="38" r="4" fill="var(--gold)" /></svg>
+          </div>
+          <div class="lb">Siêu thị</div>
+        </div>
+        <div class="poi" data-layout-allow-overflow id="poi3" style="left: 250px; top: 859px">
+          <div class="ic">
+            <svg width="52" height="40" viewBox="0 0 52 40" style="position: static"><path d="M26 2 50 14 26 26 2 14z" fill="var(--gold)" /><path d="M12 20v10c8 8 20 8 28 0V20" fill="none" stroke="var(--gold)" stroke-width="5" /></svg>
+          </div>
+          <div class="lb">Trường học</div>
+        </div>
+      </div>
+
+      <!-- S5 · 20.5–25.5s · Sổ hồng mở ra, đóng dấu -->
+      <div id="s5" class="scene clip" data-start="20.5" data-duration="5" data-track-index="5">
+        <div id="book">
+          <div id="page-l"></div>
+          <div id="page-r">
+            <svg width="340" height="460" viewBox="0 0 340 460" style="left: 0; top: 0">
+              <path class="draw" pathLength="1" d="M40 70 H300" style="stroke: #8a7a66; stroke-width: 8" />
+              <path class="draw" pathLength="1" d="M40 115 H260" style="stroke: #b8a990; stroke-width: 6" />
+              <path class="draw" pathLength="1" d="M40 155 H290" style="stroke: #b8a990; stroke-width: 6" />
+              <path class="draw" pathLength="1" d="M40 195 H220" style="stroke: #b8a990; stroke-width: 6" />
+            </svg>
+            <div id="stamp">SỔ HỒNG<br />RIÊNG</div>
+          </div>
+          <div id="cover">
+            <svg width="340" height="460" viewBox="0 0 340 460" style="left: 0; top: 0">
+              <path d="M110 230 L170 180 L230 230 V300 H110 Z M150 300 V260 H190 V300" fill="none" stroke="rgba(255,255,255,0.85)" stroke-width="7" stroke-linejoin="round" />
+            </svg>
+          </div>
+        </div>
+        <div id="s5-sub" class="txt h1" style="top: 1060px; font-size: 76px">Hoàn công đủ</div>
+        <svg id="s5-hl" width="520" height="24" viewBox="0 0 520 24" style="left: 280px; top: 1165px">
+          <path class="draw" pathLength="1" d="M8 12 H512" style="stroke-width: 14" />
+        </svg>
+      </div>
+
+      <!-- S6 · 25.5–30s · CTA: chùm chìa khóa đung đưa -->
+      <div id="s6" class="scene clip" data-start="25.5" data-duration="4.5" data-track-index="6">
+        <svg id="keys" width="300" height="560" viewBox="0 0 300 560">
+          <path d="M150 0 V120" stroke="rgba(255,255,255,0.5)" stroke-width="5" />
+          <g id="keyset">
+            <circle cx="150" cy="170" r="50" fill="none" stroke="var(--gold)" stroke-width="10" />
+            <g>
+              <circle cx="110" cy="290" r="44" fill="none" stroke="var(--gold)" stroke-width="12" />
+              <path d="M110 334 V500 M110 430 H140 M110 470 H150" stroke="var(--gold)" stroke-width="14" stroke-linecap="round" />
+            </g>
+            <g>
+              <rect x="166" y="240" width="76" height="96" rx="20" fill="var(--warm)" />
+              <path d="M204 336 V470 M204 400 H228 M204 440 H236" stroke="var(--warm)" stroke-width="12" stroke-linecap="round" />
+            </g>
+          </g>
+        </svg>
+        <div id="s6-t" class="txt h1" data-layout-allow-overflow style="top: 960px">
+          <span class="word">NHẮN</span> <span class="word">TIN</span> <span class="word gold">NGAY</span>
+        </div>
+        <div class="ring" id="ring1"></div>
+        <div class="ring" id="ring2"></div>
+        <div id="cta-icon">
+          <svg width="66" height="60" viewBox="0 0 96 88" style="position: static">
+            <path d="M8 8h80v52H40L20 80V60H8z" fill="var(--ground)" stroke="var(--ground)" stroke-width="6" stroke-linejoin="round" />
+            <circle cx="30" cy="34" r="6" fill="var(--gold)" /><circle cx="48" cy="34" r="6" fill="var(--gold)" /><circle cx="66" cy="34" r="6" fill="var(--gold)" />
+          </svg>
+        </div>
+      </div>
+
+      <div id="flash"></div>
+      <div id="wipe"></div>
+
+      <!-- Nhạc nền: "Emulsified – Chill EDM", Abstraction (Ben Burnes), CC0 -->
+      <audio id="music" src="assets/audio/music.wav" data-start="0" data-duration="30" data-track-index="10" data-volume="0.55"></audio>
+
+      <!-- SFX theo nghĩa: mỗi animation/chữ một âm -->
+      <audio id="sfx-01" src="assets/audio/whoosh-cinematic.wav" data-start="0" data-duration="1.1" data-track-index="11" data-volume="0.55"></audio>
+      <audio id="sfx-02" src="assets/audio/pop.wav" data-start="0.2" data-duration="0.68" data-track-index="12" data-volume="0.8"></audio>
+      <audio id="sfx-03" src="assets/audio/thunk.wav" data-start="1.1" data-duration="0.62" data-track-index="13" data-volume="0.8"></audio>
+      <audio id="sfx-04" src="assets/audio/tick-roll.wav" data-start="1.6" data-duration="1.05" data-track-index="11" data-volume="0.55"></audio>
+      <audio id="sfx-05" src="assets/audio/coins-land.wav" data-start="2.7" data-duration="0.2" data-track-index="12" data-volume="1"></audio>
+      <audio id="sfx-06" src="assets/audio/chime.wav" data-start="2.72" data-duration="1.2" data-track-index="13" data-volume="0.45"></audio>
+      <audio id="sfx-07" src="assets/audio/click-soft.wav" data-start="3.0" data-duration="0.32" data-track-index="11" data-volume="0.5"></audio>
+      <audio id="sfx-08" src="assets/audio/switch1.wav" data-start="3.5" data-duration="0.21" data-track-index="12" data-volume="0.9"></audio>
+      <audio id="sfx-09" src="assets/audio/whoosh.wav" data-start="4.78" data-duration="0.51" data-track-index="11" data-volume="0.8"></audio>
+      <audio id="sfx-10" src="assets/audio/pen-lines.wav" data-start="5.25" data-duration="0.86" data-track-index="12" data-volume="0.75"></audio>
+      <audio id="sfx-11" src="assets/audio/switch2.wav" data-start="6.4" data-duration="0.22" data-track-index="11" data-volume="0.9"></audio>
+      <audio id="sfx-13" src="assets/audio/roller-door.wav" data-start="7.0" data-duration="1.0" data-track-index="12" data-volume="0.85"></audio>
+      <audio id="sfx-14" src="assets/audio/click.wav" data-start="7.75" data-duration="0.32" data-track-index="11" data-volume="0.75"></audio>
+      <audio id="sfx-15" src="assets/audio/key-press.wav" data-start="8.35" data-duration="0.33" data-track-index="13" data-volume="0.8"></audio>
+      <audio id="sfx-16" src="assets/audio/swish2.wav" data-start="9.78" data-duration="0.51" data-track-index="12" data-volume="0.85"></audio>
+      <audio id="sfx-17" src="assets/audio/click-soft.wav" data-start="10.98" data-duration="0.32" data-track-index="11" data-volume="0.6"></audio>
+      <audio id="sfx-18" src="assets/audio/click.wav" data-start="11.58" data-duration="0.32" data-track-index="13" data-volume="0.6"></audio>
+      <audio id="sfx-19" src="assets/audio/chime.wav" data-start="12.9" data-duration="1.0" data-track-index="12" data-volume="0.5"></audio>
+      <audio id="sfx-20" src="assets/audio/thump.wav" data-start="13.35" data-duration="0.8" data-track-index="11" data-volume="0.75"></audio>
+      <audio id="sfx-21" src="assets/audio/classic-swish.wav" data-start="14.78" data-duration="0.34" data-track-index="13" data-volume="0.85"></audio>
+      <audio id="sfx-22" src="assets/audio/ping.wav" data-start="15.32" data-duration="1.0" data-track-index="12" data-volume="0.7"></audio>
+      <audio id="sfx-23" src="assets/audio/sparkle.wav" data-start="15.85" data-duration="1.2" data-track-index="11" data-volume="0.4"></audio>
+      <audio id="sfx-24" src="assets/audio/pop.wav" data-start="17.0" data-duration="0.68" data-track-index="13" data-volume="0.7"></audio>
+      <audio id="sfx-25" src="assets/audio/key-press.wav" data-start="18.0" data-duration="0.33" data-track-index="12" data-volume="0.75"></audio>
+      <audio id="sfx-26" src="assets/audio/tap.wav" data-start="19.0" data-duration="0.8" data-track-index="11" data-volume="0.8"></audio>
+      <audio id="sfx-27" src="assets/audio/whoosh-short.wav" data-start="20.25" data-duration="0.51" data-track-index="13" data-volume="0.6"></audio>
+      <audio id="sfx-28" src="assets/audio/thunk.wav" data-start="20.75" data-duration="0.62" data-track-index="12" data-volume="0.7"></audio>
+      <audio id="sfx-29" src="assets/audio/page-flip.wav" data-start="21.1" data-duration="1.0" data-track-index="11" data-volume="0.85"></audio>
+      <audio id="sfx-30" src="assets/audio/pen-lines.wav" data-start="21.55" data-duration="0.86" data-track-index="13" data-volume="0.55"></audio>
+      <audio id="sfx-31" src="assets/audio/stamp.wav" data-start="22.42" data-duration="0.78" data-track-index="12" data-volume="1"></audio>
+      <audio id="sfx-32" src="assets/audio/impact-bass-2.wav" data-start="22.42" data-duration="1.2" data-track-index="14" data-volume="0.6"></audio>
+      <audio id="sfx-33" src="assets/audio/ping.wav" data-start="23.3" data-duration="1.0" data-track-index="11" data-volume="0.55"></audio>
+      <audio id="sfx-34" src="assets/audio/swish5.wav" data-start="25.3" data-duration="0.32" data-track-index="13" data-volume="0.85"></audio>
+      <audio id="sfx-35" src="assets/audio/keys1.wav" data-start="25.62" data-duration="0.4" data-track-index="12" data-volume="0.9"></audio>
+      <audio id="sfx-36" src="assets/audio/notification.wav" data-start="26.1" data-duration="1.6" data-track-index="11" data-volume="0.65"></audio>
+      <audio id="sfx-37" src="assets/audio/keys3.wav" data-start="26.7" data-duration="0.46" data-track-index="13" data-volume="0.7"></audio>
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+      const q = (s) => document.querySelectorAll(s);
+
+      // ---------- S1 · Hook (0–5s) ----------
+      tl.to("#car", { x: 0, duration: 1.1, ease: "power3.out" }, 0);
+      tl.fromTo(["#wheel1", "#wheel2"], { rotation: 0 }, { rotation: 900, duration: 1.1, ease: "power3.out", transformOrigin: "50% 50%" }, 0);
+      tl.to("#speed", { opacity: 1, duration: 0.15 }, 0.1);
+      tl.to("#speed", { opacity: 0, x: -80, duration: 0.4 }, 0.75);
+      tl.to("#car-body", { rotation: 1.5, duration: 0.1, ease: "power2.out", svgOrigin: "380 390" }, 1.1);
+      tl.to("#car-body", { rotation: 0, duration: 0.35, ease: "back.out(3)", svgOrigin: "380 390" }, 1.2);
+      tl.to("#beam", { opacity: 1, duration: 0.2 }, 1.15);
+
+      tl.from(q("#s1-l1 .word"), { y: 60, scale: 0.6, opacity: 0, duration: 0.32, stagger: 0.07, ease: "back.out(2.4)" }, 0.15);
+
+      const num = document.getElementById("s1-num");
+      const price = { v: 0 };
+      const showPrice = () => (num.textContent = price.v.toFixed(1).replace(".", ","));
+      showPrice();
+      tl.from("#s1-price", { y: 80, opacity: 0, duration: 0.3, ease: "power3.out" }, 1.55);
+      tl.to(price, { v: 8.5, duration: 1.1, ease: "power3.out", onUpdate: showPrice }, 1.6);
+      tl.to("#s1-price", { scale: 1.12, duration: 0.1, ease: "power2.out" }, 2.7);
+      tl.to("#s1-price", { scale: 1, duration: 0.3, ease: "back.out(3)" }, 2.8);
+      tl.from("#s1-area", { y: 30, opacity: 0, duration: 0.3, ease: "power3.out" }, 3.0);
+      tl.to(["#aw1", "#aw2", "#aw3"], { opacity: 0.9, duration: 0.12, stagger: 0.06 }, 3.5);
+      tl.to("#s1", { y: -420, opacity: 0, filter: "blur(18px)", duration: 0.22, ease: "power4.in" }, 4.78);
+
+      // ---------- S2 · Facade (5–10s) ----------
+      tl.from("#s2", { y: 420, filter: "blur(18px)", duration: 0.3, ease: "power4.out" }, 5.0);
+      tl.to(q("#house .draw"), { strokeDashoffset: 0, duration: 0.7, stagger: 0.09, ease: "power2.inOut" }, 5.2);
+      tl.to("#hw1", { opacity: 0.85, duration: 0.12 }, 6.4);
+      tl.to("#hw2", { opacity: 0.85, duration: 0.12 }, 6.55);
+      tl.to("#hw3", { opacity: 0.85, duration: 0.12 }, 6.7);
+      tl.to("#roller", { scaleY: 0.06, duration: 0.95, ease: "power1.inOut", svgOrigin: "240 640" }, 7.0);
+      tl.from("#s2-c1", { x: -80, opacity: 0, duration: 0.35, ease: "back.out(2)" }, 7.75);
+      tl.from("#s2-c2", { x: -80, opacity: 0, duration: 0.35, ease: "back.out(2)" }, 8.35);
+      tl.to("#s2", { scale: 3.2, opacity: 0, filter: "blur(16px)", duration: 0.24, ease: "power4.in", transformOrigin: "50% 45%" }, 9.76);
+
+      // ---------- S3 · Plan (10–15s) ----------
+      tl.from("#s3", { scale: 0.35, opacity: 0, filter: "blur(16px)", duration: 0.3, ease: "power4.out", transformOrigin: "50% 45%" }, 10.0);
+      const planPaths = q("#plan .draw");
+      tl.to(planPaths[1], { strokeDashoffset: 0, duration: 0.7, ease: "power2.inOut" }, 10.3);
+      tl.to(planPaths[2], { strokeDashoffset: 0, duration: 0.5, ease: "power2.inOut" }, 10.7);
+      tl.to(planPaths[0], { strokeDashoffset: 0, duration: 0.35, ease: "power2.out" }, 10.85);
+      tl.from("#s3-w", { y: 40, opacity: 0, duration: 0.3, ease: "back.out(2)" }, 10.98);
+      tl.to(planPaths[3], { strokeDashoffset: 0, duration: 0.45, ease: "power2.out" }, 11.3);
+      tl.from("#s3-h", { y: 40, opacity: 0, duration: 0.3, ease: "back.out(2)" }, 11.58);
+      const area = { v: 0 };
+      const areaEl = document.getElementById("s3-num");
+      tl.from("#s3-area", { x: 60, opacity: 0, duration: 0.3, ease: "power3.out" }, 12.1);
+      tl.to(area, { v: 64, duration: 0.8, ease: "power2.out", onUpdate: () => (areaEl.textContent = Math.round(area.v)) }, 12.1);
+      tl.to("#s3-area", { scale: 1.1, duration: 0.1, ease: "power2.out" }, 12.9);
+      tl.to("#s3-area", { scale: 1, duration: 0.3, ease: "back.out(3)" }, 13.0);
+      tl.from("#s3-lbl", { opacity: 0, y: 20, duration: 0.3 }, 12.2);
+      tl.from(q("#plan .furn"), { y: -60, scale: 0.4, opacity: 0, duration: 0.35, stagger: 0.12, ease: "back.out(2.6)", transformOrigin: "50% 50%" }, 13.35);
+      tl.to("#wipe", { clipPath: "inset(0 0% 0 0)", duration: 0.22, ease: "power3.in" }, 14.78);
+      tl.to("#wipe", { clipPath: "inset(0 0 0 100%)", duration: 0.3, ease: "power3.out" }, 15.0);
+
+      // ---------- S4 · Map (15–20.5s) ----------
+      tl.to("#s4 .road.main", { strokeDashoffset: 0, duration: 0.8, stagger: 0.15, ease: "power2.inOut" }, 15.05);
+      tl.from("#pin", { y: -500, duration: 0.42, ease: "bounce.out" }, 15.05);
+      tl.from("#radius", { scale: 0, opacity: 0, duration: 0.6, ease: "power3.out", transformOrigin: "540px 600px" }, 15.85);
+      tl.from("#s4-r", { opacity: 0, x: 40, duration: 0.3 }, 16.0);
+      // runner travels the alleys to each amenity, drawing its trail
+      const route = [
+        { tr: "#tr1", poi: "#poi1", t: 16.4, pts: [[540, 790], [540, 520], [240, 520]] },
+        { tr: "#tr2", poi: "#poi2", t: 17.4, pts: [[240, 520], [540, 520], [540, 690], [770, 690]] },
+        { tr: "#tr3", poi: "#poi3", t: 18.4, pts: [[770, 690], [540, 690], [540, 905], [320, 905]] },
+      ];
+      tl.set("#runner", { x: 540, y: 790, opacity: 1 }, 16.4);
+      route.forEach(({ tr, poi, t, pts }) => {
+        tl.to(tr, { strokeDashoffset: 0, duration: 0.6, ease: "power1.inOut" }, t);
+        const seg = 0.6 / (pts.length - 1);
+        pts.slice(1).forEach(([x, y], i) => {
+          tl.to("#runner", { x, y, duration: seg, ease: "none" }, t + i * seg);
+        });
+        tl.to(poi, { opacity: 1, duration: 0.01 }, t + 0.6);
+        tl.from(poi, { scale: 0.3, duration: 0.35, ease: "back.out(2.5)" }, t + 0.6);
+      });
+      tl.to("#flash", { opacity: 1, duration: 0.25, ease: "power2.in" }, 20.25);
+      tl.to("#flash", { opacity: 0, duration: 0.4, ease: "power2.out" }, 20.5);
+
+      // ---------- S5 · Booklet (20.5–25.5s) ----------
+      tl.from("#book", { y: -260, scale: 0.7, opacity: 0, duration: 0.3, ease: "power3.in" }, 20.45);
+      tl.to("#cover", { scaleX: 0, duration: 0.22, ease: "power2.in" }, 21.1);
+      tl.fromTo("#page-l", { scaleX: 0 }, { scaleX: 1, duration: 0.22, ease: "power2.out" }, 21.32);
+      tl.to("#book", { x: 170, duration: 0.44, ease: "power2.inOut" }, 21.1);
+      tl.to(q("#page-r .draw"), { strokeDashoffset: 0, duration: 0.3, stagger: 0.15, ease: "power1.out" }, 21.6);
+      tl.set("#stamp", { rotation: -8, scale: 2.4, opacity: 0 }, 22.1);
+      tl.to("#stamp", { scale: 1, opacity: 1, duration: 0.32, ease: "power4.in" }, 22.1);
+      tl.to("#s5", { x: 10, duration: 0.04, yoyo: true, repeat: 3, ease: "none" }, 22.42);
+      tl.from("#s5-sub", { y: 40, opacity: 0, duration: 0.3, ease: "power3.out" }, 23.2);
+      tl.to("#s5-hl path", { strokeDashoffset: 0, duration: 0.4, ease: "power2.out" }, 23.3);
+      tl.to("#s5", { x: -1080, duration: 0.2, ease: "power4.in" }, 25.3);
+
+      // ---------- S6 · CTA (25.5–30s) ----------
+      tl.from("#s6", { x: 1080, duration: 0.26, ease: "power4.out" }, 25.5);
+      // key ring swings on its hook and settles (damped pendulum)
+      const swing = [-32, 22, -13, 7, -3, 0];
+      swing.forEach((deg, i) => {
+        tl.to("#keyset", { rotation: deg, duration: i === 0 ? 0.01 : 0.38, ease: "sine.inOut", svgOrigin: "150 120" }, i === 0 ? 25.5 : 25.62 + (i - 1) * 0.38);
+      });
+      tl.from(q("#s6-t .word"), { y: 50, opacity: 0, duration: 0.3, stagger: 0.1, ease: "back.out(2)" }, 26.05);
+      tl.from("#cta-icon", { scale: 0, duration: 0.4, ease: "back.out(2.6)" }, 26.15);
+      [
+        ["#ring1", 26.6],
+        ["#ring2", 27.6],
+        ["#ring1", 28.6],
+      ].forEach(([id, t]) => {
+        tl.fromTo(id, { scale: 0.8, opacity: 0.9 }, { scale: 1.9, opacity: 0, duration: 0.9, ease: "power2.out", immediateRender: false }, t);
+      });
+      tl.to("#s6-t", { scale: 1.06, duration: 0.18, yoyo: true, repeat: 1, ease: "power1.inOut" }, 28.0);
+
+      window.__timelines["main"] = tl;
+      tl.seek(0);
+    </script>
+  </body>
+</html>
