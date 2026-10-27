@@ -1,0 +1,818 @@
+<!doctype html>
+<html lang="vi" data-resolution="portrait">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <script src="assets/js/gsap.min.js"></script>
+    <style>
+      @font-face {
+        font-family: "Be Vietnam Pro";
+        src: url("assets/fonts/BeVietnamPro-ExtraBold.ttf") format("truetype");
+        font-weight: 800;
+      }
+      @font-face {
+        font-family: "Be Vietnam Pro";
+        src: url("assets/fonts/BeVietnamPro-SemiBold.ttf") format("truetype");
+        font-weight: 600;
+      }
+      :root {
+        --ground: #0d1826;
+        --ground-2: #13243a;
+        --road: #1a2b44;
+        --ink: #ffffff;
+        --gold: #f2c14e;
+        --warm: #ffd98a;
+        --line: rgba(242, 193, 78, 0.95);
+        --soft: rgba(255, 255, 255, 0.75);
+        --grid: rgba(255, 255, 255, 0.045);
+        --muted: rgba(255, 255, 255, 0.78);
+        --rose: #e98aa8;
+        --rose-deep: #c2255c;
+        --paper: #f6efe2;
+        --font-display: "Be Vietnam Pro", sans-serif;
+        --shadow: 0 6px 24px rgba(0, 0, 0, 0.55);
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        width: 1080px;
+        height: 1920px;
+        overflow: hidden;
+        background: var(--ground);
+      }
+      #root {
+        position: relative;
+        width: 1080px;
+        height: 1920px;
+        overflow: hidden;
+        background: radial-gradient(120% 70% at 50% 38%, var(--ground-2) 0%, var(--ground) 70%);
+        font-family: var(--font-display);
+        color: var(--ink);
+      }
+      #grid {
+        position: absolute;
+        inset: 0;
+        background-image:
+          linear-gradient(var(--grid) 2px, transparent 2px),
+          linear-gradient(90deg, var(--grid) 2px, transparent 2px);
+        background-size: 90px 90px;
+        background-position: 0 30px;
+      }
+      .scene {
+        position: absolute;
+        inset: 0;
+      }
+      .txt {
+        position: absolute;
+        left: 0;
+        width: 1080px;
+        text-align: center;
+        text-shadow: var(--shadow);
+        white-space: nowrap;
+      }
+      .h1 {
+        font-weight: 800;
+        font-size: 96px;
+        line-height: 1.05;
+        letter-spacing: -0.01em;
+      }
+      .h2 {
+        font-weight: 600;
+        font-size: 54px;
+        line-height: 1.2;
+        color: var(--muted);
+      }
+      .lbl {
+        position: absolute;
+        width: 420px;
+        text-align: center;
+        font-weight: 800;
+        font-size: 46px;
+        white-space: nowrap;
+        text-shadow: var(--shadow);
+      }
+      .gold {
+        color: var(--gold);
+      }
+      .word {
+        display: inline-block;
+      }
+      svg {
+        position: absolute;
+        overflow: visible;
+      }
+      .full {
+        left: 0;
+        top: 0;
+      }
+      .draw {
+        fill: none;
+        stroke: var(--line);
+        stroke-width: 5;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-dasharray: 1;
+        stroke-dashoffset: 1;
+      }
+      .thin {
+        stroke-width: 3;
+        stroke: var(--soft);
+      }
+      .art {
+        fill: none;
+        stroke: var(--line);
+        stroke-width: 5;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+      .art-thin {
+        fill: none;
+        stroke: var(--soft);
+        stroke-width: 3;
+        stroke-linecap: round;
+      }
+      .icon {
+        fill: none;
+        stroke: var(--warm);
+        stroke-width: 6;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+      .lit {
+        fill: var(--warm);
+        opacity: 0;
+      }
+      .chip {
+        position: absolute;
+        font-weight: 800;
+        font-size: 64px;
+        white-space: nowrap;
+        text-shadow: var(--shadow);
+      }
+      .chip .dot {
+        display: inline-block;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: var(--gold);
+        margin-right: 20px;
+        vertical-align: middle;
+        position: relative;
+        top: -6px;
+      }
+
+      /* S2 road */
+      #road-wrap {
+        position: absolute;
+        left: 270px;
+        top: 230px;
+        width: 540px;
+        height: 740px;
+        overflow: hidden;
+        background: var(--road);
+      }
+
+      /* S4 plan */
+      .dim {
+        position: absolute;
+        font-weight: 800;
+        font-size: 64px;
+        text-shadow: var(--shadow);
+        white-space: nowrap;
+      }
+      #s4-area {
+        position: absolute;
+        left: 535px;
+        top: 710px;
+        font-weight: 800;
+        font-size: 120px;
+        color: var(--gold);
+        text-shadow: var(--shadow);
+        white-space: nowrap;
+        font-variant-numeric: tabular-nums;
+      }
+      #s4-area sup {
+        font-size: 64px;
+      }
+
+      /* S7a location */
+      #pin {
+        position: absolute;
+        left: 250px;
+        top: 560px;
+        width: 100px;
+        height: 130px;
+      }
+      #mall {
+        position: absolute;
+        left: 670px;
+        top: 555px;
+        width: 140px;
+        height: 140px;
+        border-radius: 50%;
+        border: 6px solid var(--gold);
+        background: var(--ground);
+        display: grid;
+        place-items: center;
+      }
+      #s7-min {
+        top: 790px;
+        font-weight: 800;
+        font-size: 160px;
+        line-height: 1;
+        color: var(--gold);
+        font-variant-numeric: tabular-nums;
+      }
+
+      /* S9 booklet */
+      #book {
+        position: absolute;
+        left: 370px;
+        top: 420px;
+        width: 340px;
+        height: 460px;
+      }
+      #page-r,
+      #cover,
+      #page-l {
+        position: absolute;
+        top: 0;
+        width: 340px;
+        height: 460px;
+        border-radius: 10px 18px 18px 10px;
+      }
+      #page-r {
+        left: 0;
+        background: var(--paper);
+        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.45);
+      }
+      #page-l {
+        left: -340px;
+        border-radius: 18px 10px 10px 18px;
+        background: #f3dde4;
+        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.45);
+        transform-origin: 100% 50%;
+      }
+      #cover {
+        left: 0;
+        background: linear-gradient(160deg, #f2a3bd 0%, var(--rose) 60%, #d9708f 100%);
+        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+        transform-origin: 0% 50%;
+      }
+      #cover::after {
+        content: "";
+        position: absolute;
+        inset: 18px;
+        border: 4px solid rgba(255, 255, 255, 0.7);
+        border-radius: 10px;
+      }
+      #stamp {
+        position: absolute;
+        left: 28px;
+        top: 250px;
+        width: 284px;
+        height: 150px;
+        border: 8px solid var(--rose-deep);
+        border-radius: 22px;
+        display: grid;
+        place-items: center;
+        color: var(--rose-deep);
+        font-weight: 800;
+        font-size: 50px;
+        line-height: 1.02;
+        text-align: center;
+        opacity: 0;
+      }
+
+      /* S10 CTA */
+      .ring {
+        position: absolute;
+        left: 460px;
+        top: 1170px;
+        width: 160px;
+        height: 160px;
+        border-radius: 50%;
+        border: 6px solid var(--gold);
+        opacity: 0;
+      }
+      #cta-icon {
+        position: absolute;
+        left: 480px;
+        top: 1190px;
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        background: var(--gold);
+        display: grid;
+        place-items: center;
+      }
+
+      #flash {
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(60% 45% at 50% 45%, #fff6dc 0%, rgba(242, 193, 78, 0.7) 45%, rgba(242, 193, 78, 0) 100%);
+        opacity: 0;
+        pointer-events: none;
+      }
+      #wipe {
+        position: absolute;
+        inset: 0;
+        background: var(--gold);
+        clip-path: inset(0 100% 0 0);
+        pointer-events: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-duration="35"
+      data-width="1080"
+      data-height="1920"
+    >
+      <div id="grid"></div>
+
+      <!-- S1 · 0–4.67s · Hook: ô tô chạy tới, cửa garage cuốn lên -->
+      <div id="s1" class="scene clip" data-start="0" data-duration="4.667" data-track-index="1">
+        <div id="s1-t1" class="txt h1" style="top: 290px"><span class="word">NHÀ</span> <span class="word">CÓ</span></div>
+        <div id="s1-t2" class="txt h1 gold" style="top: 395px"><span class="word">GARAGE</span> <span class="word">Ô</span> <span class="word">TÔ</span></div>
+        <div id="s1-sub" class="txt h2" style="top: 525px">Lê Trọng Tấn · Tân Phú</div>
+        <svg id="s1-art" width="1080" height="800" viewBox="0 0 1080 800" style="left: 0; top: 640px">
+          <!-- 5-storey facade, garage at ground floor -->
+          <rect class="lit" id="w1" x="410" y="475" width="260" height="60" rx="3" />
+          <rect class="lit" id="w2" x="410" y="365" width="260" height="60" rx="3" />
+          <rect class="lit" id="w3" x="410" y="255" width="260" height="60" rx="3" />
+          <rect class="lit" id="w4" x="410" y="145" width="260" height="60" rx="3" />
+          <rect x="400" y="570" width="280" height="150" fill="var(--warm)" opacity="0.9" />
+          <g id="s1-roller">
+            <rect x="400" y="570" width="280" height="150" fill="#1d3150" />
+            <path d="M400 590 H680 M400 610 H680 M400 630 H680 M400 650 H680 M400 670 H680 M400 690 H680 M400 710 H680" stroke="rgba(255,255,255,0.25)" stroke-width="3" />
+          </g>
+          <path class="art" d="M370 100 H710 V720 H370 Z M370 120 H710 M370 230 H710 M370 340 H710 M370 450 H710 M370 560 H710" />
+          <path class="art-thin" d="M410 145 h260 v60 h-260 Z M410 255 h260 v60 h-260 Z M410 365 h260 v60 h-260 Z M410 475 h260 v60 h-260 Z M400 720 V570 H680 V720" />
+          <!-- street -->
+          <path d="M30 722 H1050" stroke="rgba(255,255,255,0.35)" stroke-width="4" />
+          <path d="M60 770 H170 M250 770 H360 M440 770 H550 M630 770 H740 M820 770 H930" stroke="rgba(255,255,255,0.18)" stroke-width="6" stroke-linecap="round" />
+          <g id="s1-speed" stroke="var(--warm)" stroke-width="5" stroke-linecap="round" opacity="0">
+            <path d="M0 620 H130 M30 660 H180 M10 700 H110" />
+          </g>
+          <!-- car, side view (local coords, wheels on y=422) -->
+          <g id="car" transform="translate(-600 318)">
+            <g id="car-body">
+              <path d="M200 390 H530 Q560 390 560 360 V330 Q560 312 540 308 L470 300 L420 252 Q408 240 390 240 H290 Q270 240 258 252 L215 300 Q200 304 200 320 Z" fill="var(--ground)" stroke="var(--gold)" stroke-width="6" stroke-linejoin="round" />
+              <path d="M275 300 L300 262 H360 V300 Z M380 300 V262 H400 L432 300 Z" fill="rgba(255,217,138,0.25)" stroke="rgba(255,255,255,0.8)" stroke-width="3" />
+              <rect x="536" y="320" width="22" height="14" rx="4" fill="var(--warm)" />
+            </g>
+            <g id="wheel1">
+              <circle cx="280" cy="390" r="32" fill="var(--ground)" stroke="var(--ink)" stroke-width="6" />
+              <path d="M280 364 V416 M254 390 H306" stroke="var(--gold)" stroke-width="5" />
+            </g>
+            <g id="wheel2">
+              <circle cx="480" cy="390" r="32" fill="var(--ground)" stroke="var(--ink)" stroke-width="6" />
+              <path d="M480 364 V416 M454 390 H506" stroke="var(--gold)" stroke-width="5" />
+            </g>
+          </g>
+        </svg>
+      </div>
+
+      <!-- S2 · 4.67–8.67s · Đường 10m, xe tải và ô tô tránh nhau -->
+      <div id="s2" class="scene clip" data-start="4.667" data-duration="4" data-track-index="2">
+        <svg class="full" width="1080" height="1920" viewBox="0 0 1080 1920">
+          <path class="art-thin" d="M110 260 h130 v170 h-130 Z M110 470 h130 v170 h-130 Z M110 680 h130 v170 h-130 Z M840 260 h130 v170 h-130 Z M840 470 h130 v170 h-130 Z M840 680 h130 v170 h-130 Z" style="stroke: rgba(255, 255, 255, 0.3)" />
+        </svg>
+        <div id="road-wrap">
+          <svg width="540" height="740" viewBox="0 0 540 740" style="left: 0; top: 0">
+            <path d="M3 0 V740 M537 0 V740" stroke="rgba(255,255,255,0.6)" stroke-width="6" />
+            <path d="M270 0 V740" stroke="rgba(255,255,255,0.45)" stroke-width="6" stroke-dasharray="40 34" />
+            <!-- truck heading up (right lane) -->
+            <g id="truck" transform="translate(340 760)">
+              <rect x="0" y="0" width="130" height="80" rx="14" fill="var(--ground)" stroke="var(--gold)" stroke-width="6" />
+              <path d="M18 18 H112" stroke="var(--warm)" stroke-width="6" stroke-linecap="round" />
+              <rect x="0" y="92" width="130" height="230" rx="6" fill="var(--ground)" stroke="var(--gold)" stroke-width="6" />
+              <path d="M20 130 H110 M20 170 H110 M20 210 H110 M20 250 H110 M20 290 H110" stroke="rgba(255,255,255,0.3)" stroke-width="3" />
+            </g>
+            <!-- car heading down (left lane) -->
+            <g id="car2" transform="translate(80 -260)">
+              <rect x="0" y="0" width="110" height="200" rx="34" fill="var(--ground)" stroke="var(--ink)" stroke-width="6" />
+              <path d="M16 130 Q55 112 94 130 M16 60 Q55 76 94 60" fill="none" stroke="var(--warm)" stroke-width="5" stroke-linecap="round" />
+            </g>
+          </svg>
+        </div>
+        <svg width="540" height="40" viewBox="0 0 540 40" style="left: 270px; top: 1000px">
+          <path class="draw" pathLength="1" d="M2 20 H170 M2 4 V36" />
+          <path class="draw" pathLength="1" d="M538 20 H370 M538 4 V36" />
+        </svg>
+        <div id="s2-dim" class="dim gold" style="left: 0; width: 1080px; text-align: center; top: 980px">10 m</div>
+        <div id="s2-t1" class="txt h1" style="top: 1105px; font-size: 80px">ĐƯỜNG TRƯỚC NHÀ</div>
+        <div id="s2-t2" class="txt h1 gold" style="top: 1200px">XE TẢI TRÁNH</div>
+      </div>
+
+      <!-- S3 · 8.67–12.67s · 5 tầng, thang máy chạy lên -->
+      <div id="s3" class="scene clip" data-start="8.667" data-duration="4" data-track-index="3">
+        <svg id="f5" width="400" height="860" viewBox="0 0 400 860" style="left: 340px; top: 250px">
+          <rect class="lit" id="fl4" x="30" y="545" width="230" height="90" rx="3" />
+          <rect class="lit" id="fl3" x="30" y="385" width="230" height="90" rx="3" />
+          <rect class="lit" id="fl2" x="30" y="225" width="230" height="90" rx="3" />
+          <rect class="lit" id="fl1" x="30" y="65" width="230" height="90" rx="3" />
+          <rect id="lift" x="296" y="720" width="68" height="120" rx="6" fill="var(--warm)" />
+          <path class="draw" pathLength="1" d="M0 0 H400 V860 H0 Z" />
+          <path class="draw" pathLength="1" d="M0 20 H400 M0 180 H400 M0 340 H400 M0 500 H400 M0 660 H400" />
+          <path class="draw thin" pathLength="1" d="M290 20 V860 M370 20 V860" />
+          <path class="draw thin" pathLength="1" d="M30 65 h230 v90 h-230 Z M30 225 h230 v90 h-230 Z M30 385 h230 v90 h-230 Z M30 545 h230 v90 h-230 Z" />
+          <path class="draw thin" pathLength="1" d="M30 860 V700 H260 V860" />
+        </svg>
+        <div id="s3-c1" class="chip" style="left: 300px; top: 1160px"><span class="dot"></span>5 tầng</div>
+        <div id="s3-c2" class="chip" style="left: 300px; top: 1265px"><span class="dot"></span>4 phòng ngủ</div>
+      </div>
+
+      <!-- S4 · 12.67–15.33s · Mặt bằng 4 × 20 m -->
+      <div id="s4" class="scene clip" data-start="12.667" data-duration="2.666" data-track-index="4">
+        <svg id="plan" width="220" height="1000" viewBox="0 0 220 1000" style="left: 300px; top: 300px">
+          <path class="draw" pathLength="1" d="M20 30 H200 M20 14 V46 M200 14 V46" />
+          <path class="draw" pathLength="1" d="M20 70 H200 V970 H20 Z" />
+          <path class="draw thin" pathLength="1" d="M20 300 H200 M20 520 H200 M20 740 H200 M120 520 V740" />
+          <path class="draw" pathLength="1" d="M-40 70 V970 M-56 70 H-24 M-56 970 H-24" />
+        </svg>
+        <div id="s4-w" class="dim" style="left: 345px; top: 236px">4 m</div>
+        <div id="s4-h" class="dim" style="left: 95px; top: 780px">20 m</div>
+        <div id="s4-area"><span id="s4-num">0</span> m<sup>2</sup></div>
+        <div id="s4-lbl" class="h2" style="position: absolute; left: 545px; top: 860px">diện tích</div>
+      </div>
+
+      <!-- S5 · 15.33–19.33s · Tặng full nội thất cao cấp + thang máy -->
+      <div id="s5" class="scene clip" data-start="15.333" data-duration="4" data-track-index="5">
+        <div id="s5-t1" class="txt h1" style="top: 270px">TẶNG FULL</div>
+        <div id="s5-t2" class="txt h1 gold" style="top: 375px; font-size: 78px">NỘI THẤT CAO CẤP</div>
+        <svg class="full" width="1080" height="1920" viewBox="0 0 1080 1920">
+          <g id="ic-sofa" class="icon" opacity="0"><path d="M-48 -20 h96 v40 h-96 z M-36 -20 v-18 h72 v18 M-40 20 v12 M40 20 v12" /></g>
+          <g id="ic-bed" class="icon" opacity="0"><path d="M-52 -6 h104 v30 h-104 z M-52 -6 v-30 M-42 -6 v-16 h34 v16 M-52 24 v12 M52 24 v12" /></g>
+          <g id="ic-lamp" class="icon" opacity="0"><path d="M0 -48 V-14 M-34 18 Q0 -34 34 18 Z M-8 28 h16" /></g>
+          <g id="ic-tv" class="icon" opacity="0"><path d="M-50 -32 h100 v60 h-100 z M-22 44 h44 M0 28 v16" /></g>
+          <g id="ic-lift" class="icon" opacity="0"><path d="M-36 -46 h72 v92 h-72 z M0 -46 v92 M-26 -4 l8 -12 l8 12 M10 4 l8 12 l8 -12" /></g>
+          <g id="gift">
+            <rect x="400" y="770" width="280" height="230" rx="10" fill="var(--ground)" stroke="var(--gold)" stroke-width="6" />
+            <rect x="522" y="770" width="36" height="230" fill="var(--gold)" />
+          </g>
+          <g id="lid">
+            <rect x="385" y="712" width="310" height="62" rx="10" fill="var(--ground)" stroke="var(--gold)" stroke-width="6" />
+            <rect x="522" y="712" width="36" height="62" fill="var(--gold)" />
+            <path d="M540 712 C 500 660 460 690 500 712 M540 712 C 580 660 620 690 580 712" fill="none" stroke="var(--gold)" stroke-width="8" stroke-linecap="round" />
+          </g>
+        </svg>
+        <div id="s5-t3" class="txt h1" style="top: 1080px; font-size: 72px">+ <span class="gold">THANG MÁY</span> XỊN</div>
+      </div>
+
+      <!-- S6 · 19.33–22s · Phòng xông hơi -->
+      <div id="s6" class="scene clip" data-start="19.333" data-duration="2.667" data-track-index="6">
+        <svg id="sauna" width="400" height="460" viewBox="0 0 400 460" style="left: 340px; top: 500px">
+          <path class="steam" d="M140 90 C 120 60 160 40 140 10 C 120 -20 160 -40 140 -70" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="9" stroke-linecap="round" opacity="0" />
+          <path class="steam" d="M200 80 C 180 50 220 30 200 0 C 180 -30 220 -50 200 -80" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="9" stroke-linecap="round" opacity="0" />
+          <path class="steam" d="M260 90 C 240 60 280 40 260 10 C 240 -20 280 -40 260 -70" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="9" stroke-linecap="round" opacity="0" />
+          <rect class="lit" id="sauna-glow" x="30" y="120" width="340" height="320" />
+          <path class="draw" pathLength="1" d="M0 120 L200 20 L400 120" />
+          <path class="draw" pathLength="1" d="M30 120 V440 H370 V120" />
+          <path class="draw thin" pathLength="1" d="M30 180 H370 M30 240 H370 M30 300 H370 M30 360 H370" />
+          <path class="draw" pathLength="1" d="M230 440 V220 H320 V440 M250 240 h50 v50 h-50 Z" />
+          <path class="draw" pathLength="1" d="M70 440 V370 H170 V440 M80 370 q12 -24 24 0 q12 -24 24 0 q12 -24 24 0" />
+        </svg>
+        <div id="s6-t" class="txt h1" style="top: 1060px; font-size: 84px">PHÒNG XÔNG HƠI</div>
+      </div>
+
+      <!-- S7a · 22–25.33s · Aeon Tân Phú 5 phút xe máy -->
+      <div id="s7" class="scene clip" data-start="22" data-duration="3.333" data-track-index="7">
+        <div id="s7-l1" class="lbl" style="left: 90px; top: 470px">Lê Trọng Tấn</div>
+        <div id="s7-l2" class="lbl" style="left: 530px; top: 470px">Aeon Tân Phú</div>
+        <svg width="1080" height="200" viewBox="0 0 1080 200" style="left: 0; top: 600px">
+          <path class="draw" pathLength="1" id="s7-route" d="M300 90 H670" style="stroke-dasharray: 1; stroke-width: 8; stroke: rgba(255, 217, 138, 0.8)" />
+          <g id="scooter" transform="translate(250 22)">
+            <circle cx="12" cy="62" r="16" fill="var(--ground)" stroke="var(--ink)" stroke-width="5" />
+            <circle cx="92" cy="62" r="16" fill="var(--ground)" stroke="var(--ink)" stroke-width="5" />
+            <path d="M12 62 L30 34 H66 L92 62 M66 34 L76 8 H90 M30 34 L24 22 H50" fill="none" stroke="var(--gold)" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" />
+          </g>
+        </svg>
+        <svg id="pin" viewBox="0 0 100 130">
+          <path d="M50 126 C 50 126 8 74 8 46 A 42 42 0 1 1 92 46 C 92 74 50 126 50 126 Z" fill="var(--gold)" />
+          <circle cx="50" cy="46" r="16" fill="var(--ground)" />
+        </svg>
+        <div id="mall">
+          <svg width="64" height="64" viewBox="0 0 64 64" style="position: static">
+            <path d="M10 22 H54 L50 58 H14 Z M22 22 V16 a10 10 0 0 1 20 0 V22" fill="none" stroke="var(--gold)" stroke-width="6" stroke-linejoin="round" />
+          </svg>
+        </div>
+        <div id="s7-min" class="txt"><span id="s7-num">0</span> PHÚT</div>
+        <div id="s7-sub" class="txt h1" style="top: 985px; font-size: 76px">XE MÁY</div>
+      </div>
+
+      <!-- S7b · 25.33–28s · Sân bay Tân Sơn Nhất -->
+      <div id="s8" class="scene clip" data-start="25.333" data-duration="2.667" data-track-index="8">
+        <svg class="full" width="1080" height="1920" viewBox="0 0 1080 1920">
+          <line id="trail" x1="200" y1="960" x2="200" y2="960" stroke="rgba(255,255,255,0.55)" stroke-width="6" stroke-linecap="round" />
+          <g id="plane" transform="translate(200 960)">
+            <path d="M0 -70 C 8 -70 10 -60 10 -50 V -15 L 70 15 V 30 L 10 15 V 45 L 28 60 V 70 L 0 62 L -28 70 V 60 L -10 45 V 15 L -70 30 V 15 L -10 -15 V -50 C -10 -60 -8 -70 0 -70 Z" fill="var(--gold)" transform="rotate(52)" />
+          </g>
+        </svg>
+        <div id="s8-t1" class="txt h2" style="top: 1040px">Thuận tiện di chuyển đến</div>
+        <div id="s8-t2" class="txt h1" style="top: 1115px">SÂN BAY</div>
+        <div id="s8-t3" class="txt h1 gold" style="top: 1220px">TÂN SƠN NHẤT</div>
+      </div>
+
+      <!-- S8 · 28–30s · Khu đồng bộ, hàng xóm cao tầng -->
+      <div id="s9" class="scene clip" data-start="28" data-duration="2" data-track-index="9">
+        <svg class="full" width="1080" height="1920" viewBox="0 0 1080 1920">
+          <g id="b1"><path class="art-thin" d="M150 1000 V460 H290 V1000 M175 520 h90 M175 600 h90 M175 680 h90 M175 760 h90 M175 840 h90" /></g>
+          <g id="b2"><path class="art-thin" d="M310 1000 V440 H450 V1000 M335 500 h90 M335 580 h90 M335 660 h90 M335 740 h90 M335 820 h90" /></g>
+          <g id="b3"><path class="art" d="M470 1000 V430 H610 V1000 M495 490 h90 M495 570 h90 M495 650 h90 M495 730 h90 M495 810 h90" /></g>
+          <g id="b4"><path class="art-thin" d="M630 1000 V445 H770 V1000 M655 505 h90 M655 585 h90 M655 665 h90 M655 745 h90 M655 825 h90" /></g>
+          <g id="b5"><path class="art-thin" d="M790 1000 V465 H930 V1000 M815 525 h90 M815 605 h90 M815 685 h90 M815 765 h90 M815 845 h90" /></g>
+          <path d="M120 1002 H960" stroke="rgba(255,255,255,0.4)" stroke-width="4" />
+        </svg>
+        <div id="s9-t1" class="txt h1 gold" style="top: 1060px">KHU ĐỒNG BỘ</div>
+        <div id="s9-t2" class="txt h2" style="top: 1172px; color: var(--ink)">Hàng xóm cao tầng</div>
+      </div>
+
+      <!-- S9 · 30–32.67s · Sổ hồng riêng, hoàn công đủ -->
+      <div id="s10" class="scene clip" data-start="30" data-duration="2.667" data-track-index="10">
+        <div id="book">
+          <div id="page-l"></div>
+          <div id="page-r">
+            <svg width="340" height="460" viewBox="0 0 340 460" style="left: 0; top: 0">
+              <path class="draw" pathLength="1" d="M40 70 H300" style="stroke: #8a7a66; stroke-width: 8" />
+              <path class="draw" pathLength="1" d="M40 115 H260" style="stroke: #b8a990; stroke-width: 6" />
+              <path class="draw" pathLength="1" d="M40 155 H290" style="stroke: #b8a990; stroke-width: 6" />
+              <path class="draw" pathLength="1" d="M40 195 H220" style="stroke: #b8a990; stroke-width: 6" />
+            </svg>
+            <div id="stamp">SỔ HỒNG<br />RIÊNG</div>
+          </div>
+          <div id="cover">
+            <svg width="340" height="460" viewBox="0 0 340 460" style="left: 0; top: 0">
+              <path d="M110 230 L170 180 L230 230 V300 H110 Z M150 300 V260 H190 V300" fill="none" stroke="rgba(255,255,255,0.85)" stroke-width="7" stroke-linejoin="round" />
+            </svg>
+          </div>
+        </div>
+        <div id="s10-t" class="txt h1" style="top: 1000px; font-size: 80px">Hoàn công đủ</div>
+        <svg id="s10-hl" width="560" height="24" viewBox="0 0 560 24" style="left: 260px; top: 1100px">
+          <path class="draw" pathLength="1" d="M8 12 H552" style="stroke-width: 14" />
+        </svg>
+      </div>
+
+      <!-- S10 · 32.67–35s · CTA -->
+      <div id="s11" class="scene clip" data-start="32.667" data-duration="2.333" data-track-index="11">
+        <svg id="keys" width="300" height="560" viewBox="0 0 300 560" style="left: 390px; top: 250px">
+          <path d="M150 0 V120" stroke="rgba(255,255,255,0.5)" stroke-width="5" />
+          <g id="keyset">
+            <circle cx="150" cy="170" r="50" fill="none" stroke="var(--gold)" stroke-width="10" />
+            <circle cx="110" cy="290" r="44" fill="none" stroke="var(--gold)" stroke-width="12" />
+            <path d="M110 334 V500 M110 430 H140 M110 470 H150" stroke="var(--gold)" stroke-width="14" stroke-linecap="round" />
+            <rect x="166" y="240" width="76" height="96" rx="20" fill="var(--warm)" />
+            <path d="M204 336 V470 M204 400 H228 M204 440 H236" stroke="var(--warm)" stroke-width="12" stroke-linecap="round" />
+          </g>
+        </svg>
+        <div id="s11-t1" class="txt h1 gold" style="top: 860px; font-size: 72px">MUA BÁN NHANH</div>
+        <div id="s11-t2" class="txt h1" data-layout-allow-overflow style="top: 960px">
+          <span class="word">NHẮN</span> <span class="word">TIN</span> <span class="word">NGAY</span>
+        </div>
+        <div class="ring" id="ring1"></div>
+        <div class="ring" id="ring2"></div>
+        <div id="cta-icon">
+          <svg width="66" height="60" viewBox="0 0 96 88" style="position: static">
+            <path d="M8 8h80v52H40L20 80V60H8z" fill="var(--ground)" stroke="var(--ground)" stroke-width="6" stroke-linejoin="round" />
+            <circle cx="30" cy="34" r="6" fill="var(--gold)" /><circle cx="48" cy="34" r="6" fill="var(--gold)" /><circle cx="66" cy="34" r="6" fill="var(--gold)" />
+          </svg>
+        </div>
+      </div>
+
+      <div id="flash"></div>
+      <div id="wipe"></div>
+
+      <!-- Nhạc nền: "Dream Sequence – Uplifting Synths", Abstraction (Ben Burnes), CC0 · 90 BPM, cảnh cắt đúng phách -->
+      <audio id="music" src="assets/audio/music.wav" data-start="0" data-duration="35" data-track-index="20" data-volume="0.5"></audio>
+      <!-- SFX theo nghĩa: mỗi chữ/animation một âm, mỗi file tối đa 2 lần -->
+      <audio id="sfx-01" src="assets/audio/whoosh-cinematic.wav" data-start="0.0" data-duration="1.0" data-track-index="21" data-volume="0.5"></audio>
+      <audio id="sfx-02" src="assets/audio/pop.wav" data-start="0.15" data-duration="0.68" data-track-index="22" data-volume="0.8"></audio>
+      <audio id="sfx-03" src="assets/audio/impact-bass-1.wav" data-start="0.5" data-duration="1.2" data-track-index="23" data-volume="0.7"></audio>
+      <audio id="sfx-04" src="assets/audio/thunk.wav" data-start="1.0" data-duration="0.62" data-track-index="21" data-volume="0.8"></audio>
+      <audio id="sfx-05" src="assets/audio/roller-door.wav" data-start="1.3" data-duration="1.0" data-track-index="22" data-volume="0.85"></audio>
+      <audio id="sfx-06" src="assets/audio/click-soft.wav" data-start="1.9" data-duration="0.32" data-track-index="21" data-volume="0.5"></audio>
+      <audio id="sfx-07" src="assets/audio/switch1.wav" data-start="2.45" data-duration="0.21" data-track-index="21" data-volume="0.9"></audio>
+      <audio id="sfx-08" src="assets/audio/whoosh.wav" data-start="4.447" data-duration="0.51" data-track-index="21" data-volume="0.8"></audio>
+      <audio id="sfx-09" src="assets/audio/click.wav" data-start="5.55" data-duration="0.32" data-track-index="21" data-volume="0.7"></audio>
+      <audio id="sfx-10" src="assets/audio/select_003.wav" data-start="5.95" data-duration="0.37" data-track-index="21" data-volume="0.7"></audio>
+      <audio id="sfx-11" src="assets/audio/swish3.wav" data-start="6.2" data-duration="0.64" data-track-index="22" data-volume="0.85"></audio>
+      <audio id="sfx-12" src="assets/audio/swish5.wav" data-start="8.467" data-duration="0.32" data-track-index="21" data-volume="0.85"></audio>
+      <audio id="sfx-13" src="assets/audio/pen-lines.wav" data-start="8.85" data-duration="0.86" data-track-index="21" data-volume="0.75"></audio>
+      <audio id="sfx-14" src="assets/audio/toggle_001.wav" data-start="9.95" data-duration="0.14" data-track-index="21" data-volume="0.85"></audio>
+      <audio id="sfx-15" src="assets/audio/glass_001.wav" data-start="10.5" data-duration="0.28" data-track-index="21" data-volume="0.7"></audio>
+      <audio id="sfx-16" src="assets/audio/lift-bell.wav" data-start="11.25" data-duration="1.3" data-track-index="21" data-volume="0.7"></audio>
+      <audio id="sfx-17" src="assets/audio/swish2.wav" data-start="12.427" data-duration="0.51" data-track-index="22" data-volume="0.85"></audio>
+      <audio id="sfx-18" src="assets/audio/click-soft.wav" data-start="13.35" data-duration="0.32" data-track-index="21" data-volume="0.6"></audio>
+      <audio id="sfx-19" src="assets/audio/click.wav" data-start="13.75" data-duration="0.32" data-track-index="21" data-volume="0.6"></audio>
+      <audio id="sfx-20" src="assets/audio/chime.wav" data-start="14.6" data-duration="1.2" data-track-index="21" data-volume="0.5"></audio>
+      <audio id="sfx-21" src="assets/audio/classic-swish.wav" data-start="15.113" data-duration="0.34" data-track-index="22" data-volume="0.85"></audio>
+      <audio id="sfx-22" src="assets/audio/thunk.wav" data-start="15.6" data-duration="0.62" data-track-index="22" data-volume="0.8"></audio>
+      <audio id="sfx-23" src="assets/audio/drop_002.wav" data-start="15.85" data-duration="0.19" data-track-index="21" data-volume="0.85"></audio>
+      <audio id="sfx-24" src="assets/audio/cork.wav" data-start="16.35" data-duration="0.5" data-track-index="21" data-volume="0.9"></audio>
+      <audio id="sfx-25" src="assets/audio/sparkle.wav" data-start="16.45" data-duration="1.2" data-track-index="22" data-volume="0.45"></audio>
+      <audio id="sfx-26" src="assets/audio/confirmation_001.wav" data-start="17.3" data-duration="0.29" data-track-index="21" data-volume="0.8"></audio>
+      <audio id="sfx-27" src="assets/audio/whoosh-short.wav" data-start="19.083" data-duration="0.51" data-track-index="21" data-volume="0.6"></audio>
+      <audio id="sfx-28" src="assets/audio/steam.wav" data-start="19.55" data-duration="1.6" data-track-index="22" data-volume="0.7"></audio>
+      <audio id="sfx-29" src="assets/audio/whoosh.wav" data-start="21.78" data-duration="0.51" data-track-index="21" data-volume="0.8"></audio>
+      <audio id="sfx-30" src="assets/audio/ping.wav" data-start="22.05" data-duration="1.0" data-track-index="22" data-volume="0.7"></audio>
+      <audio id="sfx-31" src="assets/audio/pop.wav" data-start="22.4" data-duration="0.68" data-track-index="21" data-volume="0.7"></audio>
+      <audio id="sfx-32" src="assets/audio/tick-roll.wav" data-start="22.9" data-duration="1.05" data-track-index="23" data-volume="0.55"></audio>
+      <audio id="sfx-33" src="assets/audio/bong_001.wav" data-start="24.05" data-duration="0.12" data-track-index="21" data-volume="0.8"></audio>
+      <audio id="sfx-34" src="assets/audio/swish5.wav" data-start="25.133" data-duration="0.32" data-track-index="21" data-volume="0.85"></audio>
+      <audio id="sfx-35" src="assets/audio/whoosh-cinematic.wav" data-start="25.45" data-duration="1.3" data-track-index="22" data-volume="0.55"></audio>
+      <audio id="sfx-36" src="assets/audio/maximize_006.wav" data-start="25.9" data-duration="0.38" data-track-index="21" data-volume="0.75"></audio>
+      <audio id="sfx-37" src="assets/audio/windy.wav" data-start="27.75" data-duration="0.9" data-track-index="21" data-volume="0.6"></audio>
+      <audio id="sfx-38" src="assets/audio/scroll_002.wav" data-start="28.05" data-duration="1.0" data-track-index="22" data-volume="0.7"></audio>
+      <audio id="sfx-39" src="assets/audio/tap.wav" data-start="28.35" data-duration="0.8" data-track-index="23" data-volume="0.8"></audio>
+      <audio id="sfx-40" src="assets/audio/classic-swish.wav" data-start="29.78" data-duration="0.34" data-track-index="21" data-volume="0.85"></audio>
+      <audio id="sfx-41" src="assets/audio/drop_002.wav" data-start="30.0" data-duration="0.19" data-track-index="22" data-volume="0.85"></audio>
+      <audio id="sfx-42" src="assets/audio/page-flip.wav" data-start="30.45" data-duration="1.0" data-track-index="21" data-volume="0.85"></audio>
+      <audio id="sfx-43" src="assets/audio/stamp.wav" data-start="30.95" data-duration="0.78" data-track-index="22" data-volume="1"></audio>
+      <audio id="sfx-44" src="assets/audio/impact-bass-2.wav" data-start="30.95" data-duration="1.2" data-track-index="23" data-volume="0.6"></audio>
+      <audio id="sfx-45" src="assets/audio/ping.wav" data-start="31.35" data-duration="1.0" data-track-index="24" data-volume="0.55"></audio>
+      <audio id="sfx-46" src="assets/audio/swish2.wav" data-start="32.427" data-duration="0.51" data-track-index="21" data-volume="0.85"></audio>
+      <audio id="sfx-47" src="assets/audio/keys1.wav" data-start="32.7" data-duration="0.4" data-track-index="22" data-volume="0.9"></audio>
+      <audio id="sfx-48" src="assets/audio/notification.wav" data-start="32.85" data-duration="1.6" data-track-index="23" data-volume="0.65"></audio>
+      <audio id="sfx-49" src="assets/audio/keys3.wav" data-start="33.35" data-duration="0.46" data-track-index="21" data-volume="0.7"></audio>
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+      const q = (s) => document.querySelectorAll(s);
+      const popIn = (sel, t, extra = {}) =>
+        tl.from(sel, { y: 50, scale: 0.6, opacity: 0, duration: 0.32, ease: "back.out(2.4)", ...extra }, t);
+      const riseIn = (sel, t) => tl.from(sel, { y: 36, opacity: 0, duration: 0.3, ease: "power3.out" }, t);
+
+      // ---------- S1 · Hook (0–4.67) ----------
+      tl.to("#car", { x: -190, duration: 1.0, ease: "power3.out" }, 0);
+      tl.fromTo(["#wheel1", "#wheel2"], { rotation: 0 }, { rotation: 900, duration: 1.0, ease: "power3.out", transformOrigin: "50% 50%" }, 0);
+      tl.to("#s1-speed", { opacity: 1, duration: 0.15 }, 0.1);
+      tl.to("#s1-speed", { opacity: 0, x: -80, duration: 0.4 }, 0.7);
+      tl.to("#car-body", { rotation: 1.5, duration: 0.1, ease: "power2.out", transformOrigin: "50% 100%" }, 1.0);
+      tl.to("#car-body", { rotation: 0, duration: 0.35, ease: "back.out(3)", transformOrigin: "50% 100%" }, 1.1);
+      popIn(q("#s1-t1 .word"), 0.15, { stagger: 0.07 });
+      popIn(q("#s1-t2 .word"), 0.5, { stagger: 0.08 });
+      tl.to("#s1-t2", { scale: 1.08, duration: 0.1, ease: "power2.out" }, 0.82);
+      tl.to("#s1-t2", { scale: 1, duration: 0.25, ease: "power2.inOut" }, 0.92);
+      tl.to("#s1-roller", { scaleY: 0.06, duration: 0.85, ease: "power1.inOut", svgOrigin: "540 570" }, 1.3);
+      riseIn("#s1-sub", 1.9);
+      tl.to(["#w1", "#w2", "#w3", "#w4"], { opacity: 0.88, duration: 0.1, stagger: 0.08 }, 2.45);
+      tl.to("#s1", { y: -420, opacity: 0, filter: "blur(18px)", duration: 0.22, ease: "power4.in" }, 4.447);
+
+      // ---------- S2 · Road 10 m (4.67–8.67) ----------
+      tl.from("#s2", { y: 420, filter: "blur(18px)", duration: 0.3, ease: "power4.out" }, 4.667);
+      tl.to("#truck", { y: -360, duration: 3.0, ease: "none" }, 4.9);
+      tl.to("#car2", { y: 780, duration: 2.6, ease: "none" }, 4.95);
+      tl.to(q("#s2 .draw"), { strokeDashoffset: 0, duration: 0.4, ease: "power2.out" }, 5.2);
+      popIn("#s2-dim", 5.55);
+      riseIn("#s2-t1", 5.95);
+      popIn("#s2-t2", 6.2);
+      tl.to("#s2", { x: -1080, duration: 0.2, ease: "power4.in" }, 8.467);
+
+      // ---------- S3 · 5 floors + lift (8.67–12.67) ----------
+      tl.from("#s3", { x: 1080, duration: 0.26, ease: "power4.out" }, 8.667);
+      tl.to(q("#f5 .draw"), { strokeDashoffset: 0, duration: 0.6, stagger: 0.08, ease: "power2.inOut" }, 8.85);
+      tl.from("#lift", { opacity: 0, duration: 0.3 }, 9.5);
+      tl.from("#s3-c1", { x: -80, opacity: 0, duration: 0.35, ease: "back.out(2)" }, 9.95);
+      tl.to("#lift", { y: -660, duration: 1.2, ease: "power2.inOut" }, 10.05);
+      ["#fl4", "#fl3", "#fl2", "#fl1"].forEach((id, i) => tl.to(id, { opacity: 0.85, duration: 0.15 }, 10.3 + i * 0.28));
+      tl.from("#s3-c2", { x: -80, opacity: 0, duration: 0.35, ease: "back.out(2)" }, 10.5);
+      tl.to("#lift", { scale: 1.08, duration: 0.1, yoyo: true, repeat: 1, transformOrigin: "50% 50%" }, 11.25);
+      tl.to("#s3", { scale: 3.2, opacity: 0, filter: "blur(16px)", duration: 0.24, ease: "power4.in", transformOrigin: "50% 40%" }, 12.427);
+
+      // ---------- S4 · Plan 4 × 20 (12.67–15.33) ----------
+      tl.from("#s4", { scale: 0.35, opacity: 0, filter: "blur(16px)", duration: 0.3, ease: "power4.out", transformOrigin: "50% 40%" }, 12.667);
+      const planPaths = q("#plan .draw");
+      tl.to(planPaths[1], { strokeDashoffset: 0, duration: 0.55, ease: "power2.inOut" }, 12.85);
+      tl.to(planPaths[2], { strokeDashoffset: 0, duration: 0.45, ease: "power2.inOut" }, 13.15);
+      tl.to(planPaths[0], { strokeDashoffset: 0, duration: 0.3, ease: "power2.out" }, 13.2);
+      popIn("#s4-w", 13.35);
+      tl.to(planPaths[3], { strokeDashoffset: 0, duration: 0.4, ease: "power2.out" }, 13.5);
+      popIn("#s4-h", 13.75);
+      const area = { v: 0 };
+      const areaEl = document.getElementById("s4-num");
+      tl.from("#s4-area", { x: 60, opacity: 0, duration: 0.3, ease: "power3.out" }, 13.95);
+      riseIn("#s4-lbl", 14.0);
+      tl.to(area, { v: 80, duration: 0.65, ease: "power2.out", onUpdate: () => (areaEl.textContent = Math.round(area.v)) }, 13.95);
+      tl.to("#s4-area", { scale: 1.1, duration: 0.1, ease: "power2.out" }, 14.6);
+      tl.to("#s4-area", { scale: 1, duration: 0.3, ease: "back.out(3)" }, 14.7);
+      tl.to("#wipe", { clipPath: "inset(0 0% 0 0)", duration: 0.22, ease: "power3.in" }, 15.113);
+      tl.to("#wipe", { clipPath: "inset(0 0 0 100%)", duration: 0.3, ease: "power3.out" }, 15.333);
+
+      // ---------- S5 · Gift (15.33–19.33) ----------
+      tl.from(["#gift", "#lid"], { y: -500, duration: 0.27, ease: "power3.in" }, 15.333);
+      popIn("#s5-t1", 15.6);
+      popIn("#s5-t2", 15.85);
+      tl.to(["#gift", "#lid"], { rotation: 4, duration: 0.06, yoyo: true, repeat: 3, ease: "none", svgOrigin: "540 1000" }, 16.05);
+      tl.to("#lid", { y: -360, x: -260, rotation: -40, opacity: 0, duration: 0.6, ease: "power2.out", svgOrigin: "540 740" }, 16.35);
+      const icons = [
+        ["#ic-sofa", 230, 700],
+        ["#ic-bed", 850, 700],
+        ["#ic-lamp", 300, 560],
+        ["#ic-tv", 780, 560],
+        ["#ic-lift", 540, 610],
+      ];
+      icons.forEach(([id, x, y], i) => {
+        tl.set(id, { x: 540, y: 860, scale: 0.2, opacity: 1 }, 16.4);
+        tl.to(id, { x, y, scale: 1.25, duration: 0.5, ease: "back.out(1.6)" }, 16.42 + i * 0.08);
+      });
+      tl.fromTo("#s5-t3", { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 0.3, ease: "power3.out" }, 17.3);
+      tl.to("#ic-lift", { scale: 1.5, duration: 0.15, yoyo: true, repeat: 1, ease: "power2.out" }, 17.3);
+      tl.to("#s5", { opacity: 0, filter: "blur(20px)", duration: 0.3, ease: "power2.in" }, 19.083);
+
+      // ---------- S6 · Sauna (19.33–22) ----------
+      tl.from("#s6", { opacity: 0, filter: "blur(20px)", duration: 0.3, ease: "power2.out" }, 19.333);
+      tl.to(q("#sauna .draw"), { strokeDashoffset: 0, duration: 0.5, stagger: 0.07, ease: "power2.inOut" }, 19.4);
+      tl.to("#sauna-glow", { opacity: 0.18, duration: 0.4 }, 19.9);
+      riseIn("#s6-t", 19.55);
+      q("#sauna .steam").forEach((el, i) => {
+        [0, 1].forEach((k) => {
+          const t = 19.75 + i * 0.22 + k * 0.85;
+          tl.fromTo(el, { y: 30, opacity: 0 }, { y: -50, opacity: 0.85, duration: 0.4, ease: "sine.out", immediateRender: false }, t);
+          tl.to(el, { y: -110, opacity: 0, duration: 0.45, ease: "sine.in" }, t + 0.4);
+        });
+      });
+      tl.to("#s6", { y: -420, opacity: 0, filter: "blur(18px)", duration: 0.22, ease: "power4.in" }, 21.78);
+
+      // ---------- S7a · Aeon 5 minutes (22–25.33) ----------
+      tl.from("#s7", { y: 420, filter: "blur(18px)", duration: 0.3, ease: "power4.out" }, 22.0);
+      tl.from("#pin", { y: -400, duration: 0.4, ease: "bounce.out" }, 22.0);
+      riseIn("#s7-l1", 22.1);
+      tl.from("#mall", { scale: 0, duration: 0.35, ease: "back.out(2.5)" }, 22.4);
+      riseIn("#s7-l2", 22.4);
+      const mins = { v: 0 };
+      const minEl = document.getElementById("s7-num");
+      riseIn("#s7-min", 22.9);
+      tl.to(mins, { v: 5, duration: 1.1, ease: "none", onUpdate: () => (minEl.textContent = Math.floor(mins.v)) }, 22.9);
+      tl.to("#s7-route", { strokeDashoffset: 0, duration: 1.1, ease: "none" }, 22.9);
+      tl.to("#scooter", { x: 560, duration: 1.1, ease: "power1.inOut" }, 22.9);
+      tl.to("#scooter", { y: 18, duration: 0.1, yoyo: true, repeat: 9, ease: "sine.inOut" }, 22.9);
+      tl.to("#s7-min", { scale: 1.1, duration: 0.1, ease: "power2.out" }, 24.0);
+      tl.to("#s7-min", { scale: 1, duration: 0.3, ease: "back.out(3)" }, 24.1);
+      popIn("#s7-sub", 24.05);
+      tl.to("#s7", { x: -1080, duration: 0.2, ease: "power4.in" }, 25.133);
+
+      // ---------- S7b · Airport (25.33–28) ----------
+      tl.from("#s8", { x: 1080, duration: 0.26, ease: "power4.out" }, 25.333);
+      tl.to("#trail", { attr: { x2: 1060, y2: 300 }, duration: 1.2, ease: "power2.in" }, 25.45);
+      tl.to("#plane", { x: 1060, y: 300, duration: 1.2, ease: "power2.in" }, 25.45);
+      riseIn("#s8-t1", 25.6);
+      popIn("#s8-t2", 25.9);
+      popIn("#s8-t3", 26.0);
+      tl.to("#flash", { opacity: 1, duration: 0.25, ease: "power2.in" }, 27.75);
+      tl.to("#flash", { opacity: 0, duration: 0.4, ease: "power2.out" }, 28.0);
+
+      // ---------- S8 · Neighbourhood (28–30) ----------
+      ["#b1", "#b2", "#b3", "#b4", "#b5"].forEach((id, i) => {
+        tl.from(id, { scaleY: 0, duration: 0.4, ease: "back.out(1.4)", svgOrigin: `${220 + i * 160} 1000` }, 28.05 + Math.abs(i - 2) * 0.08);
+      });
+      popIn("#s9-t1", 28.35);
+      riseIn("#s9-t2", 28.45);
+      tl.set("#wipe", { clipPath: "inset(0 100% 0 0)" }, 29.7);
+      tl.to("#wipe", { clipPath: "inset(0 0% 0 0)", duration: 0.22, ease: "power3.in" }, 29.78);
+      tl.set("#wipe", { clipPath: "inset(0 0% 0 0)" }, 30.0);
+      tl.to("#wipe", { clipPath: "inset(0 0 0 100%)", duration: 0.3, ease: "power3.out" }, 30.0);
+
+      // ---------- S9 · Legal (30–32.67) ----------
+      tl.from("#book", { y: -260, scale: 0.7, opacity: 0, duration: 0.25, ease: "power3.in" }, 30.0);
+      tl.to("#cover", { scaleX: 0, duration: 0.2, ease: "power2.in" }, 30.45);
+      tl.fromTo("#page-l", { scaleX: 0 }, { scaleX: 1, duration: 0.2, ease: "power2.out" }, 30.65);
+      tl.to("#book", { x: 170, duration: 0.4, ease: "power2.inOut" }, 30.45);
+      tl.to(q("#page-r .draw"), { strokeDashoffset: 0, duration: 0.25, stagger: 0.08, ease: "power1.out" }, 30.75);
+      tl.set("#stamp", { rotation: -8, scale: 2.4, opacity: 0 }, 30.63);
+      tl.to("#stamp", { scale: 1, opacity: 1, duration: 0.32, ease: "power4.in" }, 30.63);
+      tl.to("#s10", { x: 10, duration: 0.04, yoyo: true, repeat: 3, ease: "none" }, 30.95);
+      riseIn("#s10-t", 31.35);
+      tl.to("#s10-hl path", { strokeDashoffset: 0, duration: 0.35, ease: "power2.out" }, 31.45);
+      tl.to("#s10", { scale: 3.2, opacity: 0, filter: "blur(16px)", duration: 0.24, ease: "power4.in", transformOrigin: "50% 40%" }, 32.427);
+
+      // ---------- S10 · CTA (32.67–35) ----------
+      tl.from("#s11", { scale: 0.35, opacity: 0, filter: "blur(16px)", duration: 0.3, ease: "power4.out", transformOrigin: "50% 40%" }, 32.667);
+      [-30, 20, -12, 6, -2, 0].forEach((deg, i) => {
+        tl.to("#keyset", { rotation: deg, duration: i === 0 ? 0.01 : 0.34, ease: "sine.inOut", svgOrigin: "150 120" }, i === 0 ? 32.667 : 32.7 + (i - 1) * 0.34);
+      });
+      popIn("#s11-t1", 32.8);
+      popIn(q("#s11-t2 .word"), 32.85, { stagger: 0.08 });
+      tl.from("#cta-icon", { scale: 0, duration: 0.4, ease: "back.out(2.6)" }, 33.0);
+      [
+        ["#ring1", 33.4],
+        ["#ring2", 34.1],
+      ].forEach(([id, t]) => {
+        tl.fromTo(id, { scale: 0.8, opacity: 0.9 }, { scale: 1.9, opacity: 0, duration: 0.85, ease: "power2.out", immediateRender: false }, t);
+      });
+      tl.to("#s11-t2", { scale: 1.06, duration: 0.17, yoyo: true, repeat: 1, ease: "power1.inOut" }, 34.0);
+
+      window.__timelines["main"] = tl;
+      tl.seek(0);
+    </script>
+  </body>
+</html>
