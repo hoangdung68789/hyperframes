@@ -1,4 +1,4 @@
-# Thẻ cập nhật quy tắc gộp · 28/10/2026 · CHỜ DŨNG DUYỆT
+# Thẻ cập nhật quy tắc gộp · 28/10/2026 · ĐÃ DUYỆT (Dũng duyệt toàn bộ 28/10/2026; C5: a đồng ý, b 80/100, c đồng ý)
 
 Nguồn: trao đổi ngày 27–28/10/2026, khi dựng 3 video mẫu (20s, 30s, Lê Trọng Tấn 35s).
 Cách duyệt: trả lời theo mã, ví dụ «Duyệt A1–A8, C. Sửa B2: …». Mục chưa duyệt thì chưa áp dụng.
